@@ -10,11 +10,20 @@ import UIKit
 
 class ToDoListViewController: UITableViewController {
 
-    var todoList = ["one","two","three"]
+    var todoList = [Item]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+        let newItem = Item()
+        newItem.title = "one"
+        todoList.append( newItem)
+        let newItem2 = Item()
+        newItem2.title = "two"
+        todoList.append( newItem2)
+        let newItem3 = Item()
+        newItem3.title = "three"
+        todoList.append( newItem3)
     }
 
     ///////////////////////////////////////////
@@ -23,7 +32,9 @@ class ToDoListViewController: UITableViewController {
     
     override func tableView(_ tableview:UITableView, cellForRowAt: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ToDoItemCell", for: cellForRowAt)
-        cell.textLabel?.text = todoList[cellForRowAt.row]
+        let item = todoList[cellForRowAt.row]
+        cell.textLabel?.text = item.title
+        cell.accessoryType = item.done ? .checkmark : .none
         return cell
     }
     
@@ -33,12 +44,8 @@ class ToDoListViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         print("\(todoList[indexPath.row])")
-        if tableView.cellForRow(at: indexPath)?.accessoryType == .checkmark {
-            tableView.cellForRow(at: indexPath)?.accessoryType = .none
-        } else {
-            tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
-        }
-
+        todoList[indexPath.row].done = !(todoList[indexPath.row]).done
+        tableView.reloadData()
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
@@ -49,7 +56,9 @@ class ToDoListViewController: UITableViewController {
         let alert = UIAlertController(title: "Add New Item", message: "", preferredStyle: .alert)
         let action = UIAlertAction(title: "Add Item", style: .default) { (action) in
             // what will happen when user presses add button
-            self.todoList.append(textField.text!)
+            let newItem = Item()
+            newItem.title = textField.text!
+            self.todoList.append(newItem)
             self.tableView.reloadData()
         }
         alert.addTextField { (alertTextField) in
